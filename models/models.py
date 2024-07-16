@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, ForeignKey
+from sqlalchemy import Table, Column, Integer, Float, String, ForeignKey
 from config.db import meta, engine
 from sqlalchemy.orm import relationship
 
@@ -26,6 +26,17 @@ parceiros_turisticos = Table(
     Column("nome_parceiro", String(150)),
     Column("tipo_servico", String(150)),
     Column("detalhes", String(250)),
+)
+
+houses = Table(
+   "houses", meta,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("title", String(255)),
+    Column("description", String(255)),
+    Column("price", Float),
+    Column("status", String(50)),  # for sale or for rent
+    Column("seller_id", Integer, ForeignKey("users.id")),
+    Column("agent_id", Integer, ForeignKey("users.id"))
 )
 
 meta.create_all(engine)

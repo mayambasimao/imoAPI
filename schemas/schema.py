@@ -49,3 +49,25 @@ class ParceiroTuristico(ParceiroTuristicoBase):
     
     class Config:
         orm_mode = True
+
+# ESQUEMA PARA TABELA HOUSES
+class HouseBase(BaseModel):
+    title: str
+    description: str
+    price: float
+    status: str
+    
+class HouseCreate(HouseBase):
+    seller_id: int
+    agent_id: Optional[int] = None
+
+class HouseUpdate(HouseBase):
+    agent_id: Optional[int] = None
+
+class House(HouseBase):
+    id: int
+    seller_id: int
+    agent_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
