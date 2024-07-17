@@ -88,7 +88,8 @@ def update_user(id: int, user: UserCreate):
         query = update(users).values(
             name=user.name,
             email=user.email,
-            password=encrypted_password
+            password=encrypted_password,
+            role=user.role
         ).where(users.c.id == id)
         
         result = conn.execute(query)

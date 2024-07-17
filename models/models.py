@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, Float, String, ForeignKey
+from sqlalchemy import Table, Column, Integer, Float, String, ForeignKey, Boolean
 from config.db import meta, engine
 from sqlalchemy.orm import relationship
 
@@ -31,10 +31,11 @@ parceiros_turisticos = Table(
 houses = Table(
    "houses", meta,
     Column("id", Integer, primary_key=True, index=True),
-    Column("title", String(255)),
+    Column("title", String(150)),
     Column("description", String(255)),
     Column("price", Float),
-    Column("status", String(50)),  # for sale or for rent
+    Column("type_transaction", String(50)),  # for sale or for rent
+    Column("status", Boolean, default=True), # available or unavailable
     Column("seller_id", Integer, ForeignKey("users.id")),
     Column("agent_id", Integer, ForeignKey("users.id"))
 )

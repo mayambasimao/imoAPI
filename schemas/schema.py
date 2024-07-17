@@ -8,7 +8,7 @@ class UserBase(BaseModel):
     password: str
 
 class UserCreate(UserBase):
-    role: str  # 'cliente', 'agente_imobiliario', 'intermediario_bancario', 'parceiro_turistico'
+    role: str  # 'cliente', 'agente_imobiliario', 'intermediario_bancario', 'parceiro_turistico', 'vendedor'
 
 class UserUpdate(UserBase):
     pass
@@ -71,3 +71,7 @@ class House(HouseBase):
 
     class Config:
         orm_mode = True
+        
+class TokenData(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
