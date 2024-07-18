@@ -1,7 +1,11 @@
-from sqlalchemy import Table, Column, Integer, Float, String, ForeignKey, Boolean
+from sqlalchemy import Table, Column, Integer, String, Float, Boolean, ForeignKey, Enum, DateTime
 from config.db import meta, engine
 from sqlalchemy.orm import relationship
 
+assignment_status = Enum('pending', 'accepted', 'rejected', name='assignment_status')
+visit_status = Enum('pending', 'approved', 'rejected', name='visit_status')
+
+#Role: vendedor, cliente, agenteImob, ted, servicosEsp, interBanc, parceiroTuris
 
 users = Table(
     "users", meta,
@@ -12,32 +16,38 @@ users = Table(
     Column("role", String(50))
 )
 
-servicos_especializados = Table(
-    "servicos_especializados", meta,
-    Column("id", Integer, primary_key=True, index=True),
-    Column("tipo_servico", String(150)),
-    Column("descricao", String(250)),
-    Column("preco", Integer),
-)
-
-parceiros_turisticos = Table(
-    "parceiros_turisticos", meta,
-    Column("id", Integer, primary_key=True, index=True),
-    Column("nome_parceiro", String(150)),
-    Column("tipo_servico", String(150)),
-    Column("detalhes", String(250)),
-)
-
 houses = Table(
-   "houses", meta,
+    "houses", meta,
     Column("id", Integer, primary_key=True, index=True),
     Column("title", String(150)),
     Column("description", String(255)),
     Column("price", Float),
     Column("type_transaction", String(50)),  # for sale or for rent
-    Column("status", Boolean, default=True), # available or unavailable
+    Column("status", Boolean, default=True),  # available or unavailable
     Column("seller_id", Integer, ForeignKey("users.id")),
-    Column("agent_id", Integer, ForeignKey("users.id"))
+    Column("agent_id", Integer, ForeignKey("users.id")),
+    Column("assignment_status", assignment_status, default='pending')
+)
+
+visit_requests = Table(
+    "visit_requests", meta,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("house_id", Integer, ForeignKey("houses.id")),
+    Column("client_id", Integer, ForeignKey("users.id")),
+    Column("agent_id", Integer, ForeignKey("users.id")),
+    Column("scheduled_time", DateTime),
+    Column("status", assignment_status, default='pending') # Estado da solicitação de visita
+)
+
+short_rentals = Table(
+    "short_rentals", meta,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("house_id", Integer, ForeignKey("houses.id")),
+    Column("client_id", Integer, ForeignKey("users.id")),
+    Column("agent_id", Integer, ForeignKey("users.id")),
+    Column("start_date", DateTime),
+    Column("end_date", DateTime),
+    Column("status", assignment_status, default='pending')  # pending, accepted, rejected
 )
 
 meta.create_all(engine)

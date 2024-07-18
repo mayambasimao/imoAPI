@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import datetime
 from pydantic import BaseModel
 
 # ESQUEMA PARA TABELA USUARIO 
@@ -20,58 +21,63 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
-# ESQUEMA PARA TABELA SERVICOS ESPECIALIZADOS
-class ServicosEspecializadosBase(BaseModel):
-    tipo: str
-    descricao: str
-    preco: int
-
-class ServicosEspecializadosCreate(ServicosEspecializadosBase):
-    pass
-
-class ServicosEspecializados(ServicosEspecializadosBase):
-    id: int
-    
-    class Config:
-        orm_mode = True
-
-# ESQUEMA PARA TABELA PARCEIROS TURISTICOS
-class ParceiroTuristicoBase(BaseModel):
-    nome_parceiro: str
-    tipo_servico: str
-    detalhes: str
-
-class ParceiroTuristicoCreate(ParceiroTuristicoBase):
-    pass
-
-class ParceiroTuristico(ParceiroTuristicoBase):
-    id: int
-    
-    class Config:
-        orm_mode = True
 
 # ESQUEMA PARA TABELA HOUSES
 class HouseBase(BaseModel):
     title: str
     description: str
     price: float
-    status: str
-    
-class HouseCreate(HouseBase):
-    seller_id: int
-    agent_id: Optional[int] = None
+    type_transaction: str
 
-class HouseUpdate(HouseBase):
-    agent_id: Optional[int] = None
+class HouseCreate(HouseBase):
+    agent_id: Optional[int]
+
+class HouseUpdate(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
+    price: Optional[float]
+    type_transaction: Optional[str]
+    status: Optional[bool]
 
 class House(HouseBase):
     id: int
     seller_id: int
-    agent_id: Optional[int] = None
+    agent_id: Optional[int]
+    status: bool
+    assignment_status: str
 
     class Config:
         orm_mode = True
-        
+
+#eESQUEMA PARA TABELA VISITA
+class VisitRequest(BaseModel):
+    house_id: int
+    scheduled_time: datetime
+    
+
+    class Config:
+        orm_mode = True
+
+# ESQUEMA PARA SHORT RENTALS
+class ShortRentalBase(BaseModel):
+    house_id: int
+    start_date: datetime
+    end_date: datetime
+
+class ShortRentalCreate(ShortRentalBase):
+    pass
+
+class ShortRental(ShortRentalBase):
+    id: int
+    client_id: int
+    agent_id: int
+    status: str
+
+    class Config:
+        orm_mode = True       
+
 class TokenData(BaseModel):
-    name: Optional[str] = None
-    role: Optional[str] = None
+    access_token: str
+    token_type: str
+    name: str
+    role: str

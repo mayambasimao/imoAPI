@@ -54,6 +54,7 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
             raise HTTPException(status_code=400, detail="Incorrect email or password")
         
         access_token = create_access_token(data={"sub": user_dict["email"], "name": user_dict["name"], "role": user_dict["role"]})
+        print(f"Access Token: {access_token}")  # Adicionado para debugging
         return {
             "access_token": access_token,
             "token_type": "bearer",
