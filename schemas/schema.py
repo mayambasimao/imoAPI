@@ -53,7 +53,15 @@ class House(HouseBase):
 class VisitRequest(BaseModel):
     house_id: int
     scheduled_time: datetime
-    
+
+class VisitRequestCreate(VisitRequest):
+    pass
+
+class VisitRequestt(VisitRequest):
+    id: int
+    client_id: int
+    agent_id: int
+    status: str   
 
     class Config:
         orm_mode = True

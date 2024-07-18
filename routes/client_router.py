@@ -3,7 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy import select, insert
 from datetime import datetime
-from schemas.schema import VisitRequest, House,  ShortRental, ShortRentalCreate
+from schemas.schema import VisitRequest, House,  ShortRental, ShortRentalCreate, VisitRequestt
 from config.db import conn
 from models.models import houses, visit_requests, short_rentals
 from config.dependencies import is_client
@@ -74,7 +74,35 @@ def request_visit(visit_request: VisitRequest, current_user: dict = Depends(is_c
     except SQLAlchemyError as e:
         print(f"Erro ao solicitar visita: {e}")
         raise HTTPException(status_code=500, detail="Erro interno do servidor")
-    
+
+# Endpoint para visualizar todas as visitas pendentes
+@client_router.get("/visits", response_model=List[VisitRequestt])
+def get_all_visits_client(current_user: dict = Depends(is_client)):
+    try:
+        visits_query = select(visit_requests).where(
+            visit_requests.c.client_id == current_user["id"]
+        )
+        result = conn.execute(visits_query).fetchall()
+
+        visits_list = []
+        for visit in result:
+            visit_dict = {
+                "id": visit.id,
+                "house_id": visit.house_id,
+                "client_id": visit.client_id,
+                "agent_id": visit.agent_id,
+                "scheduled_time": visit.scheduled_time,
+                "status": visit.status
+            }
+            visits_list.append(VisitRequestt(**visit_dict))
+
+
+        return visits_list
+    except SQLAlchemyError as e:
+        print(f"Erro ao buscar visitas pendentes: {e}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor")
+
+
 # Endpoint para um cliente visualizar todas as casas para arrendar
 @client_router.get("/houses/for-rent", response_model=List[House])
 def get_houses_for_rent(current_user: dict = Depends(is_client)):
